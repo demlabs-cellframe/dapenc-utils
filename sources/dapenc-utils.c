@@ -1,5 +1,6 @@
 //#include "dap_chain.h"
 //#include "dap_chain_mine.h"
+#include "/home/avc/dev/dapenc-utils/libdap/crypto/dap_enc_sidh16.h"
 #include "dap_common.h"
 #include "dap_config.h"
 #include "dap_enc.h"
@@ -10,10 +11,61 @@
 #include <sys/mman.h>
 #include <fcntl.h>
 
+#include <liboqs/kex/kex.h>
+
 #define LOG_TAG "dapenc-utils"
 
 
 FILE* my_file_to_wite;
+
+struct kex_testcase {
+    enum OQS_KEX_alg_name alg_name;
+    unsigned char *seed;
+    size_t seed_len;
+    char *named_parameters;
+    char *id;
+    int run;
+    int iter;
+};
+
+/* Add new testcases here */
+struct kex_testcase kex_testcases[] = {
+//#ifdef ENABLE_KEX_LWE_FRODO
+//    {OQS_KEX_alg_lwe_frodo, (unsigned char *) "01234567890123456", 16, "recommended", "lwe_frodo_recommended", 0, 100},
+//#endif
+//#ifdef ENABLE_CODE_MCBITS
+//    {OQS_KEX_alg_code_mcbits, NULL, 0, NULL, "code_mcbits", 0, 25},
+//#endif
+//#ifdef ENABLE_KEX_MLWE_KYBER
+//    {OQS_KEX_alg_mlwe_kyber, NULL, 0, NULL, "mlwe_kyber", 0, 100},
+//#endif
+//#ifndef DISABLE_NTRU_ON_WINDOWS_BY_DEFAULT
+//#ifdef ENABLE_KEX_NTRU
+//    {OQS_KEX_alg_ntru, NULL, 0, NULL, "ntru", 0, 25},
+//#endif
+//#endif
+//    {OQS_KEX_alg_rlwe_bcns15, NULL, 0, NULL, "rlwe_bcns15", 0, 100},
+//#ifdef ENABLE_KEX_RLWE_MSRLN16
+//    {OQS_KEX_alg_rlwe_msrln16, NULL, 0, NULL, "rlwe_msrln16", 0, 100},
+//#endif
+//#ifdef ENABLE_KEX_RLWE_NEWHOPE
+//    {OQS_KEX_alg_rlwe_newhope, NULL, 0, NULL, "rlwe_newhope", 0, 100},
+//#endif
+#ifdef ENABLE_KEX_SIDH_CLN16
+    {OQS_KEX_alg_sidh_cln16, NULL, 0, NULL, "sidh_cln16", 0, 10},
+    {OQS_KEX_alg_sidh_cln16_compressed, NULL, 0, NULL, "sidh_cln16_compressed", 0, 10},
+#endif
+//#ifdef ENABLE_SIDH_IQC_REF
+//    {OQS_KEX_alg_sidh_iqc_ref, NULL, 0, "params771", "sidh_iqc_ref", 0, 10},
+//#endif
+//#ifdef ENABLE_KEX_RLWE_NEWHOPE_AVX2
+//    {OQS_KEX_alg_rlwe_newhope_avx2, NULL, 0, NULL, "rlwe_newhope_avx2", 0, 100},
+//#endif
+
+};
+
+#define KEX_TEST_ITERATIONS 100
+#define KEX_BENCH_SECONDS_DEFAULT 1
 
 
 
@@ -29,7 +81,6 @@ int main(int argc, const char *argv[]) {
 
     char buffer[512];
     log_it(L_INFO, "dapenc-utils version 0.0.1 \n");
-
                         if (strcmp(argv[2], "encrypt") == 0) {
                             if (argc > 4) {
                                 /* encrypted/decrypted cmd param 4 */
