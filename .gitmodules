@@ -1,4 +1,4 @@
 [submodule "libdap"]
 	path = libdap
-	url = https://github.com/demlabsinc/libdap.git
+	url = https://github.com/kelvinblockchain/libdap
 
