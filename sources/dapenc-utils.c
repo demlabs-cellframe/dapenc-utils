@@ -30,7 +30,7 @@ struct dapenc_testcase dapenc_testcases[] = {
 
 #define DAPENC_BENCH_SECONDS_DEFAULT 1
 
-int print_message (label, str, len) {
+void print_message (const char *label, const char *str, size_t len) {
     size_t i;
     printf("%-20s (%4zu bytes):  ", (label), (size_t)(len));
     for (i = 0; i < (len); i++) {
@@ -58,7 +58,7 @@ static int dapenc_test_correctness(OQS_RAND *rand, enum OQS_KEX_alg_name alg_nam
     size_t bob_key_len;
 
     // setup
-    test_k = dap_enc_sidh16_key_new_generate(test_k->data, test_k->data_size);
+    dap_enc_key_t test_k = dap_enc_sidh16_key_new_generate(test_k->data, test_k->data_size);
     if (test_k == NULL) {
        log_it(L_INFO, "new_method failed\n");
         rc = 0;
@@ -198,7 +198,7 @@ static int dapenc_bench_wrapper(OQS_RAND *rand, enum OQS_KEX_alg_name alg_name, 
     printf("%-30s | %10s | %14s | %15s | %10s | %16s | %10s\n", test_k->type, "", "", "", "", "", "");
 
     TIME_OPERATION_SECONDS({
-                               dap_enc_sidh16_encode(NULL, NULL, NULL, NULL);
+                               dap_enc  sidh16_encode(NULL, NULL, NULL, NULL);
                                cleanup_alice_0(test_k, alice_priv, alice_msg);
                            }, "alice 0", seconds);
 
